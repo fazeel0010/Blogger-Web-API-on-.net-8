@@ -6,17 +6,11 @@ namespace BlogApp.Model
 {
     public class BlogPost
     {
-        public BlogPost(string title, string content)
-        {
-            Title = title;
-            Content = content;
-        }
 
-        public BlogPost()
-        {
-        }
+        public uint Id { get; set; }
 
-        public int Id { get; set; }
+        [ForeignKey("BlogId")]
+        public uint BlogId { get; set; }
 
         [Required]
         public string Title { get; set; }
@@ -25,5 +19,17 @@ namespace BlogApp.Model
         public string Content { get; set; }
 
         public List<BlogPostComment> BlogPostComments { get; set; } = new List<BlogPostComment>();
+
+        public BlogPost(string title, string content,uint blogId)
+        {
+            Title = title;
+            Content = content;
+            BlogId = blogId;
+        }
+
+        public BlogPost()
+        {
+        }
+
     }
 }

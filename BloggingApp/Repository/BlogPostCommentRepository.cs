@@ -14,11 +14,11 @@ namespace BlogApp.Repository
 
         public static void CreateBlogPostComment(BlogPostComment postComment)
         {
-            postComment.Id = BlogPostsComment.Count + 1;
+            postComment.Id = (uint) BlogPostsComment.Count + 1;
             BlogPostsComment.Add(postComment);
         }
 
-        public static List<string> GetBlogPostCommentsByBlogPostId(int blogPostId)
+        public static List<string> GetBlogPostCommentsByBlogPostId(uint blogPostId)
         {
             return BlogPostsComment.Where(x=> x.BlogPostId == blogPostId).Select(x=>x.Comment).ToList();
         }

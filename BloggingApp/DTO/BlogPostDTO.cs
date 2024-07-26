@@ -28,8 +28,16 @@ namespace BlogApp.DTO
         }
     }
 
+    public class CreateBlog
+    {
+        [Required]
+        public string Name { get; set; }
+    }
+
     public class CreateBlogPost
     {
+        [Required]
+        public uint BlogId { get; set; }
         [Required]
         public string Title { get; set; }
         [Required]

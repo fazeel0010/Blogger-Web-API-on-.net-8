@@ -8,7 +8,7 @@ using static BlogApp.DbContext.BlogDbContext;
 namespace BlogApp.Controllers
 {
     [ApiController]
-    [Route("[controller]/api/posts")]
+    [Route("api/")]
     public class BlogController : ControllerBase
     {
         private readonly BlogServices _blogService;
@@ -21,7 +21,31 @@ namespace BlogApp.Controllers
             _blogService = blogService;
         }
 
-        [HttpGet(Name = "posts")]
+        [HttpGet("blogs")]
+        public IActionResult GetAllBlogs()
+        {
+            var allBlog = _blogService.GetAllBlogs();
+            if (allBlog == null)
+                return NotFound("There are no blogs in database");
+
+            var blogPostDTOList = new List<BlogPost>();
+            foreach (var item in allBlog)
+            {
+                item.BlogPosts = BlogPostRepository.GetBlogPostByBlogId(item.Id);
+            }
+            return Ok(allBlog);
+        }
+
+
+        [HttpPost("blog")]
+        public IActionResult CreateBlog(CreateBlog blogPost)
+        {
+            _blogService.CreateBlog(blogPost);
+            return Ok("Blog has been created successfully");
+        }
+
+
+        [HttpGet("posts")]
         public IActionResult GetAllBlogPosts()
         {
             var allBlogPosts = _blogService.GetAllBlogPost();
@@ -36,15 +60,19 @@ namespace BlogApp.Controllers
             return Ok(blogPostDTOList);
         }
 
-        [HttpPost]
+
+        [HttpPost("posts")]
         public IActionResult CreateBlogPost( CreateBlogPost blogPost)
         {
+            var data = BlogRepository.GetBlogById(blogPost.BlogId);
+            if (data == null)
+                return NotFound($"The blog Id:{blogPost.BlogId} does not exit in the database");
             _blogService.CreateBlogPost(blogPost);
-            return Ok("Blog post created successfully");
+            return Ok("Blog post has been created successfully");
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetBlogPostById(int id)
+        [HttpGet("posts/{id}")]
+        public IActionResult GetBlogPostById(uint id)
         {
             var blogPost = _blogService.GetBlogPostById(id);
             if (blogPost == null)
@@ -53,8 +81,8 @@ namespace BlogApp.Controllers
             return Ok(blogPostDTO);
         }
 
-        [HttpPost("{id}/comments")]
-        public IActionResult AddComment(int id, CreateComment comment)
+        [HttpPost("posts/{id}/comments")]
+        public IActionResult AddComment(uint id, CreateComment comment)
         {
             var data = BlogPostRepository.GetBlogPostById(id);
             if (data == null)
